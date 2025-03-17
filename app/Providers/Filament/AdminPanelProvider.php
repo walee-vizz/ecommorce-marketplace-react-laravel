@@ -14,6 +14,7 @@ use Filament\Support\Colors\Color;
 use Filament\Widgets;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
@@ -58,9 +59,17 @@ class AdminPanelProvider extends PanelProvider
                     RolesEnum::Vendor->value,
                 )
             ])
+            ->plugins([
+                \BezhanSalleh\FilamentShield\FilamentShieldPlugin::make(),
+            ])
             // ->authMiddleware([
             //     Authenticate::class,
             // ])
         ;
+    }
+
+    public function boot()
+    {
+        Model::unguard();
     }
 }
