@@ -10,7 +10,7 @@ export default function Welcome() {
         <link rel="preconnect" href="https://fonts.bunny.net" />
         <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600" rel="stylesheet" />
       </Head>
-      <div className="hero bg-gray-200 h-[300px]">
+      <div className="hero bg-gray-200 h-[520px]">
         <div className="hero-content text-center">
           <div className="max-w-md">
             <h1 className="text-5xl font-bold">Hello there</h1>
