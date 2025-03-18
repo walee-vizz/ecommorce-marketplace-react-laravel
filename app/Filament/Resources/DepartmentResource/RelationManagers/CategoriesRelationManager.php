@@ -47,6 +47,8 @@ class CategoriesRelationManager extends RelationManager
                     ->label('Parent Category')
                     ->preload()
                     ->searchable(),
+                Forms\Components\Toggle::make('active')
+                    ->default(true),
 
             ]);
     }
@@ -56,8 +58,10 @@ class CategoriesRelationManager extends RelationManager
         return $table
             ->recordTitleAttribute('name')
             ->columns([
-                Tables\Columns\TextColumn::make('name'),
+                Tables\Columns\TextColumn::make('name')->sortable()->searchable(),
+                Tables\Columns\TextColumn::make('parent.name')->sortable()->searchable(),
                 Tables\Columns\TextColumn::make('slug'),
+                Tables\Columns\IconColumn::make('active')->boolean(),
             ])
             ->filters([
                 //

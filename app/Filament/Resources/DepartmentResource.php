@@ -16,6 +16,7 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Resources\DepartmentResource\Pages;
 use App\Filament\Resources\DepartmentResource\RelationManagers;
 use App\Filament\Resources\DepartmentResource\RelationManagers\CategoriesRelationManager;
+use Filament\Tables\Columns\IconColumn;
 
 class DepartmentResource extends Resource
 {
@@ -82,10 +83,7 @@ class DepartmentResource extends Resource
                 TextColumn::make('slug')->sortable()->searchable(),
                 TextColumn::make('meta_title')->sortable()->searchable(),
                 TextColumn::make('meta_description')->sortable()->searchable(),
-                TextColumn::make('active')
-                    ->formatStateUsing(function ($state) {
-                        return $state ? 'Yes' : 'No';
-                    }),
+                IconColumn::make('active')->boolean(),
                 TextColumn::make('created_at')->date('d-M-Y')->sortable()->toggleable(),
                 TextColumn::make('updated_at')->date('d-M-Y')->sortable()->toggleable(),
             ])
