@@ -13,6 +13,7 @@ class ProductImages extends EditRecord
 {
     protected static string $resource = ProductResource::class;
     protected static ?string $navigationIcon = 'heroicon-s-photo';
+    protected static ?string $title = 'Product Images';
 
     public function form(Form $form): Form
     {
@@ -21,6 +22,7 @@ class ProductImages extends EditRecord
                 // Add your form fields here
                 SpatieMediaLibraryFileUpload::make('images')
                     ->image()
+                    ->label(false)
                     ->multiple()
                     ->openable()
                     ->panelLayout('grid')
