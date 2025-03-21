@@ -35,7 +35,10 @@ const activeItemStyles = 'text-neutral-900 dark:bg-neutral-800 dark:text-neutral
 export function Navbar({ useSidebar = true }) {
   const page = usePage<SharedData>();
   const { auth } = page.props;
+  const user = auth.user;
+  const isAllowedToDashboard = user?.roles.some(role => ['Admin', 'Vendor'].includes(role));
 
+  console.log('auth', user);
   return (
     <div className="navbar bg-base-100 shadow-sm">
       <div className="flex-1 pl-5">
@@ -90,8 +93,14 @@ export function Navbar({ useSidebar = true }) {
                 <li>
                   <Link href={route('profile.edit')} className="justify-between"> Profile <span className="badge">New</span></Link>
                 </li>
+
                 <li>
-                  <Link href={route('profile.edit')}>Settings</Link> </li>
+                  {isAllowedToDashboard ? (
+                    <a href={route('filament.admin.pages.dashboard')}>Settings</a>
+                  ) : (
+                    <Link href={route('profile.edit')}>Settings</Link>
+                  )}
+                </li>
                 <li>
                   <Link href={route('logout')} method={"post"} as="button">Logout</Link> </li>
 
