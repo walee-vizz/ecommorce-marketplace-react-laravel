@@ -9,9 +9,11 @@ use Illuminate\Support\Facades\Auth;
 use Filament\Forms\Components\Repeater;
 use Filament\Resources\Pages\EditRecord;
 use App\Filament\Resources\ProductResource;
+use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\TextInput;
+use Illuminate\Database\Eloquent\Model;
 
 class ProductVariations extends EditRecord
 {
@@ -21,8 +23,35 @@ class ProductVariations extends EditRecord
 
     public function form(Form $form): Form
     {
+        $types = $this->record?->variationTypes;
+        $fields = [];
+        foreach ($types as $type) {
+            $fields[] =
+                TextInput::make("variation_type_" . $type->id . '.id')
+                ->hidden();
+            $fields[] =    TextInput::make("variation_type_" . $type->id . '.name')
+                ->label($type->name);
+        }
+        // dd($fields);
         return $form
-            ->schema([]);
+            ->schema([
+                Repeater::make('variations')
+                    ->addable(false)
+                    ->collapsible()
+                    ->label(false)
+                    ->schema([
+                        Section::make()
+                            ->schema($fields)
+                            ->columns(3),
+                        TextInput::make('quantity')
+                            ->numeric(),
+                        TextInput::make('price')
+                            ->numeric(),
+
+                    ])
+                    ->columns(2)
+                    ->columnSpanFull(),
+            ]);
     }
     protected function getHeaderActions(): array
     {
@@ -40,120 +69,122 @@ class ProductVariations extends EditRecord
         return $data;
     }
 
-    public function mergeCartesianWithExisting($variationTypes, $variations): array
+    private function mergeCartesianWithExisting($variationTypes, $existingData): array
     {
         $mergedVariations = [];
         $defaultQuantity = $this->record?->quantity;
         $defaultPrice = $this->record?->price;
         $cartesianProduct =  $this->cartesianProduct($variationTypes, $defaultQuantity, $defaultPrice);
         $mergedResults = [];
+        foreach ($cartesianProduct as $product) {
 
-        // foreach ($cartesianProduct as $product) {
+            $optionIds = collect($product)
+                ->filter(fn($value, $key) => str_starts_with($key, 'variation_type'))
+                ->map(fn($option) => $option['id'])
+                ->values()
+                ->toArray();
 
-        //     $optionIds = collect($product)
-        //     ->filter(fn($value, $key) => str_starts_with($key, 'variation_type'))
-        //     ->map(fn($option) => $option['id'])
-        //     ->values()
-        //     ->toArray();
+            //Find matching entry in existing data
+            $match = array_filter($existingData, function ($existingOption) use ($optionIds) {
 
-        //     //Find matching entry in existing data
-        //     $match = array_filter( $existingData, function($existingOption) use ($optionIds){
+                return $existingOption['variation_type_option_ids'] === $optionIds;
+            });
+            // dd($cartesianProduct, $existingData, $optionIds, $match);
 
-        //         return $existingOption['variation_type_option_ids'] === $optionIds;
-        //     });
-
-        // }
-        return $mergedVariations;
+            if (!empty($match)) {
+                $existingEntry = reset($match);
+                $product['id'] = $existingEntry['id'];
+                $product['quantity'] = $existingEntry['quantity'];
+                $product['price'] = $existingEntry['price'];
+            } else {
+                $product['quantity'] = $defaultQuantity;
+                $product['price'] = $defaultPrice;
+            }
+            $mergedResults[] = $product;
+        }
+        return $mergedResults;
     }
 
 
-    public function cartesianProduct($types, $quantity, $price) {}
-}
+    private function cartesianProduct($variationTypes, $quantity, $price)
+    {
+        $result = [[]];
 
-                      // Data Sample
-// [
-//     {
-//         "variation_type_1":{
-//             "id":1,
-//             "name":"Black",
-//             "type":"Color"
-//         },
-//         "variation_type_2":{
-//             "id":4,
-//             "name":"Small",
-//             "type":"Size"
-//         },
-//         "quantity":10,
-//         "price":13.00,
-//     },
-//     {
-//         "variation_type_1":{
-//             "id":1,
-//             "name":"Black",
-//             "type":"Color"
-//         },
-//         "variation_type_2":{
-//             "id":5,
-//             "name":"Medium",
-//             "type":"Size"
-//         },
-//         "quantity":10,
-//         "price":13.00,
-//     }
-//     {
-//         "variation_type_1":{
-//             "id":2,
-//             "name":"White",
-//             "type":"Color"
-//         },
-//         "variation_type_2":{
-//             "id":4,
-//             "name":"Small",
-//             "type":"Size"
-//         },
-//         "quantity":10,
-//         "price":13.00,
-//     }
-//     {
-//         "variation_type_1":{
-//             "id":2,
-//             "name":"White",
-//             "type":"Color"
-//         },
-//         "variation_type_2":{
-//             "id":5,
-//             "name":"Medium",
-//             "type":"Size"
-//         },
-//         "quantity":10,
-//         "price":13.00,
-//     }
-//     {
-//         "variation_type_1":{
-//             "id":3,
-//             "name":"Green",
-//             "type":"Color"
-//         },
-//         "variation_type_2":{
-//             "id":4,
-//             "name":"Small",
-//             "type":"Size"
-//         },
-//         "quantity":10,
-//         "price":13.00,
-//     },
-//     {
-//         "variation_type_1":{
-//             "id":3,
-//             "name":"Green",
-//             "type":"Color"
-//         },
-//         "variation_type_2":{
-//             "id":5,
-//             "name":"Medium",
-//             "type":"Size"
-//         },
-//         "quantity":10,
-//         "price":13.00,
-//     }
-// ]
+        foreach ($variationTypes as $variationType) {
+            $append = [];
+
+            foreach ($variationType->options as $option) {
+
+                foreach ($result as $combination) {
+                    $newCombination = $combination + [
+                        'variation_type_' . $variationType->id => [
+                            'id' => $option->id,
+                            'name' => $option->name,
+                            'type' => $variationType->name,
+                        ],
+                    ];
+                    $append[] = $newCombination;
+                }
+            }
+
+            $result = $append;
+        }
+
+        foreach ($result as &$combination) {
+            if (count($combination) == count($variationTypes)) {
+
+                $item['quantity'] = $quantity;
+                $item['price'] = $price;
+            }
+        }
+        return $result;
+    }
+
+
+
+    protected function mutateFormDataBeforeSave(array $data): array
+    {
+        // dd($data);
+        $formattedData = array();
+
+        foreach ($data['variations'] as $variation) {
+            $variationTypeOptionIds = [];
+
+            foreach ($this->record->variationTypes as $variationType) {
+                $variationTypeOptionIds[] = $variation['variation_type_' . $variationType->id]['id'];
+            }
+            $formattedData[] = [
+                'id' => $variation['id'],
+                'product_id' => $this->record->id,
+                'quantity' => $variation['quantity'],
+                'price' => $variation['price'],
+                'variation_type_option_ids' => $variationTypeOptionIds,
+            ];
+        }
+        $data['variations'] = $formattedData;
+        return $data;
+    }
+
+
+    protected function handleRecordUpdate(Model $record, array $data): Model
+    {
+        // dd($data);
+
+        $variations = $data['variations'];
+        // dd($variations);
+        // $record->variations()->delete();
+        $variations = collect($variations)->map(function ($variation) {
+            return [
+                'id' => $variation['id'],
+                'product_id' => $variation['product_id'],
+                'variation_type_option_ids' => json_encode($variation['variation_type_option_ids']),
+                'quantity' => $variation['quantity'],
+                'price' => $variation['price'],
+            ];
+        })->toArray();
+
+        $record->variations()->upsert($variations, ['id'], ['variation_type_option_ids', 'quantity', 'price']);
+        unset($data['variations']);
+        return $record;
+    }
+}

@@ -54,6 +54,7 @@ class AdminPanelProvider extends PanelProvider
                 SubstituteBindings::class,
                 DisableBladeIconComponents::class,
                 DispatchServingFilamentEvent::class,
+                \Hasnayeen\Themes\Http\Middleware\SetTheme::class,
                 'auth',
                 sprintf(
                     'role:%s|%s',
@@ -63,6 +64,9 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->plugins([
                 \BezhanSalleh\FilamentShield\FilamentShieldPlugin::make(),
+                \Hasnayeen\Themes\ThemesPlugin::make()
+                // ->canViewThemesPage(fn () => auth()->user()?->is_admin)
+                ,
             ])
             // ->authMiddleware([
             //     Authenticate::class,

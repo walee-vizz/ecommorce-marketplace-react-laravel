@@ -2,19 +2,22 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use App\Enums\ProductStatusEnum;
 use Spatie\MediaLibrary\HasMedia;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Database\Eloquent\Model;
 use Spatie\MediaLibrary\InteractsWithMedia;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 class Product extends Model implements HasMedia
 {
     use SoftDeletes, InteractsWithMedia;
 
-    //
+
+
 
     public function registerMediaConversions(?Media $media = null): void
     {
@@ -42,6 +45,18 @@ class Product extends Model implements HasMedia
     }
     public function scopeIsPublished($query)
     {
-        return $query->where('status', 'published');
+        return $query->where('status', ProductStatusEnum::Published);
+    }
+    public function scopeIsDraft($query)
+    {
+        return $query->where('status', ProductStatusEnum::Draft);
+    }
+    public function scopeIsOutOfStock($query)
+    {
+        return $query->where('status', ProductStatusEnum::OutOfStock);
+    }
+    public function scopeForVendor($query,)
+    {
+        return $query->where('created_by', Auth::user()->id);
     }
 }

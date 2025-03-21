@@ -13,6 +13,7 @@ use Illuminate\Support\Str;
 use App\Enums\ProductStatusEnum;
 use Filament\Resources\Resource;
 use Filament\Resources\Pages\Page;
+use Illuminate\Support\Facades\Auth;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\RichEditor;
 use Filament\Pages\SubNavigationPosition;
@@ -56,7 +57,10 @@ class ProductResource extends Resource
         return auth()->user()->can('delete_product');
     }
 
-
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()->forVendor();
+    }
 
     public static function form(Form $form): Form
     {
@@ -218,7 +222,7 @@ class ProductResource extends Resource
             EditProduct::class,
             ProductImages::class,
             ProductVariationTypes::class,
-            // ProductVariations::class,
+            ProductVariations::class,
         ]);
     }
 }
