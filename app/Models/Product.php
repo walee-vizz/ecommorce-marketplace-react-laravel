@@ -34,6 +34,10 @@ class Product extends Model implements HasMedia
     {
         return $this->belongsTo(Category::class);
     }
+    public function createdBy(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'created_by');
+    }
     public function variationTypes(): HasMany
     {
         return $this->hasMany(VariationType::class);
@@ -53,7 +57,7 @@ class Product extends Model implements HasMedia
     }
     public function scopeIsOutOfStock($query)
     {
-        return $query->where('status', ProductStatusEnum::OutOfStock);
+        return $query->where('status', ProductStatusEnum::OutOfStock)->orWhere('stock', '<=', 0);
     }
     public function scopeForVendor($query,)
     {

@@ -11,6 +11,7 @@ use App\Models\Department;
 use Filament\Tables\Table;
 use Illuminate\Support\Str;
 use App\Enums\ProductStatusEnum;
+use App\Enums\RolesEnum;
 use Filament\Resources\Resource;
 use Filament\Resources\Pages\Page;
 use Illuminate\Support\Facades\Auth;
@@ -59,7 +60,12 @@ class ProductResource extends Resource
 
     public static function getEloquentQuery(): Builder
     {
-        return parent::getEloquentQuery()->forVendor();
+        $query = parent::getEloquentQuery();
+        if (Auth::user()->hasRole(RolesEnum::Vendor)) {
+            return $query->forVendor();
+        }
+        return $query;
+        // return parent::getEloquentQuery()->forVendor();
     }
 
     public static function form(Form $form): Form

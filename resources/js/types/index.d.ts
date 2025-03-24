@@ -41,3 +41,49 @@ export interface User {
     updated_at: string;
     [key: string]: unknown; // This allows for additional properties...
 }
+
+export type Product = {
+    id: number;
+    title: string;
+    slug: string;
+    description: string;
+    price: number;
+    stock: number;
+    image: string;
+    user:{
+        id: number;
+        name: string;
+    };
+    department: {
+        id: number;
+        name: string;
+    };
+    category: {
+        id: number;
+        name: string;
+    };
+    created_at: string;
+    updated_at: string;
+    [key: string]: unknown;
+}
+
+export interface PaginationLink {
+    url: string;
+    label: string;
+    active: boolean;
+};
+export interface PaginationMetadata {
+    current_page: number;
+    last_page: number;
+    from: number;
+    to: number;
+    total: number;
+    per_page: number;
+    count: number;
+    links: PaginationLink[]
+}
+
+
+export type PaginationProps<T> = {
+    data:Array<T>;
+}
