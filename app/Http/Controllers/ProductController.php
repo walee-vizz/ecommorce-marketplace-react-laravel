@@ -15,15 +15,17 @@ class ProductController extends Controller
     {
         $products = Product::isPublished()->paginate(10);
 
-        return Inertia::render('Home', [
+        return Inertia::render('home', [
             'products' => ProductListResource::collection($products),
         ]);
     }
 
     public function show(Product $product)
     {
-        return Inertia::render('Product', [
+        // dd($product);
+        return Inertia::render('products/show', [
             'product' => new ProductResource($product),
+            'variationOptions' => request('options', []),
         ]);
     }
 }

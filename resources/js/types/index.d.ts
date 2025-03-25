@@ -42,6 +42,7 @@ export interface User {
     [key: string]: unknown; // This allows for additional properties...
 }
 
+
 export type Product = {
     id: number;
     title: string;
@@ -50,7 +51,10 @@ export type Product = {
     price: number;
     stock: number;
     image: string;
-    user:{
+    images: Image[];
+    description: string;
+    short_description: string;
+    created_by:{
         id: number;
         name: string;
     };
@@ -62,6 +66,13 @@ export type Product = {
         id: number;
         name: string;
     };
+    variationTypes:VariationType[];
+    variations:Array<{
+        id: number;
+        quantity: number;
+        price: number;
+        variation_type_option_ids: number[];
+    }>
     created_at: string;
     updated_at: string;
     [key: string]: unknown;
@@ -86,4 +97,25 @@ export interface PaginationMetadata {
 
 export type PaginationProps<T> = {
     data:Array<T>;
+}
+
+export type VariationType = {
+    id: number;
+    name: string;
+    type: 'Select' | 'Radio' | 'Image';
+    options:VariationTypeOption[];
+}
+
+export type VariationTypeOption = {
+    id: number;
+    name: string;
+    images?: Image[];
+    type:VariationType
+}
+
+export type Image = {
+    id: number;
+    thumb:string;
+    small:string;
+    large:string;
 }
