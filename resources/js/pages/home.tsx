@@ -1,5 +1,5 @@
 import ProductItem from '@/components/app/product-item';
-import CurrencyFormatter from '@/components/ui/currency-formatter';
+// import CurrencyFormatter from '@/components/ui/currency-formatter';
 import AppHeaderLayout from '@/layouts/app/app-header-layout';
 import { Product, PaginationProps } from '@/types';
 

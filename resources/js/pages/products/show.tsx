@@ -7,7 +7,7 @@ import { Head, router, useForm, usePage } from "@inertiajs/react";
 import { useEffect, useMemo, useState } from "react";
 
 export default function Show({ product, variationOptions }: { product: Product, variationOptions: number[] }) {
-  // console.log('Product :', product);
+  console.log('Product :', product);
   // console.log('Product variations :', variationOptions);
 
   const form = useForm<{
@@ -72,7 +72,7 @@ export default function Show({ product, variationOptions }: { product: Product, 
     }
 
 
-  });
+  }, []);
 
 
 
@@ -192,13 +192,11 @@ export default function Show({ product, variationOptions }: { product: Product, 
   }
 
   useEffect(() => {
-    const idsmap = Object.fromEntries(
+    const idsMap = Object.fromEntries(
       Object.entries(selectedOptions).map(([typeId, option]) => [typeId, option.id])
     );
 
-    // console.log('ids map : ', idsmap);
-
-    form.setData('variation_option_ids', idsmap);
+    form.setData('variation_option_ids', idsMap);
 
   }, [selectedOptions]);
 

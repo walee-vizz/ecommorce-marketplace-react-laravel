@@ -38,7 +38,6 @@ export function Navbar({ useSidebar = true }) {
   const user = auth.user;
   const isAllowedToDashboard = user?.roles.some(role => ['Admin', 'Vendor'].includes(role));
 
-  console.log('auth', user);
   return (
     <div className="navbar bg-base-100 shadow-sm">
       <div className="flex-1 pl-5">
