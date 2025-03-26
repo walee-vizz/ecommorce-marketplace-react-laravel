@@ -65,13 +65,8 @@ export default function Show({ product, variationOptions }: { product: Product, 
 
       const selectedOptionId = variationOptions?.[type.id];
       if (selectedOptionId) {
-        console.log('type :', type);
-        console.log('type options :', type.options);
         const option = type.options.find((op) => op.id == selectedOptionId) || type.options[0];
-        console.log('type option :', option);
-
         chooseOption(type.id, option, false);
-        console.log('selected options :', selectedOptions);
 
       }
     }
@@ -116,7 +111,7 @@ export default function Show({ product, variationOptions }: { product: Product, 
   }
 
   const onAddToCart = () => {
-    console.log('Add to cart');
+    // console.log('Add to cart');
     form.post(route('cart.store', product.id), {
       preserveScroll: true,
       preserveState: true,
@@ -201,7 +196,7 @@ export default function Show({ product, variationOptions }: { product: Product, 
       Object.entries(selectedOptions).map(([typeId, option]) => [typeId, option.id])
     );
 
-    console.log('ids map : ', idsmap);
+    // console.log('ids map : ', idsmap);
 
     form.setData('variation_option_ids', idsmap);
 

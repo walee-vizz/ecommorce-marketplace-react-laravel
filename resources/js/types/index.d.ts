@@ -47,7 +47,6 @@ export type Product = {
     id: number;
     title: string;
     slug: string;
-    description: string;
     price: number;
     stock: number;
     image: string;
@@ -82,7 +81,7 @@ export interface PaginationLink {
     url: string;
     label: string;
     active: boolean;
-};
+}
 export interface PaginationMetadata {
     current_page: number;
     last_page: number;
