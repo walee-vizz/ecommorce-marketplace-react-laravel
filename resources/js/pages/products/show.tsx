@@ -72,7 +72,7 @@ export default function Show({ product, variationOptions }: { product: Product, 
     }
 
 
-  }, []);
+  });
 
 
 
