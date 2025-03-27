@@ -7,16 +7,16 @@ import { Head, router, useForm, usePage } from "@inertiajs/react";
 import { useEffect, useMemo, useState } from "react";
 
 export default function Show({ product, variationOptions }: { product: Product, variationOptions: number[] }) {
-  console.log('Product :', product);
+  // console.log('Product :', product);
   // console.log('Product variations :', variationOptions);
 
   const form = useForm<{
     quantity: number;
-    variation_option_ids: Record<string, number>;
+    option_ids: Record<string, number>;
     price: number | null;
   }>({
     quantity: 1,
-    variation_option_ids: {},
+    option_ids: {},
     price: null,
   });
 
@@ -118,7 +118,9 @@ export default function Show({ product, variationOptions }: { product: Product, 
       onError: (err) => {
         console.log('Error :', err);
       },
-      onSuccess: () => { }
+      onSuccess: () => {
+        alert('Item added successfully.');
+      }
     })
   }
 
@@ -196,7 +198,7 @@ export default function Show({ product, variationOptions }: { product: Product, 
       Object.entries(selectedOptions).map(([typeId, option]) => [typeId, option.id])
     );
 
-    form.setData('variation_option_ids', idsMap);
+    form.setData('option_ids', idsMap);
 
   }, [selectedOptions]);
 

@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use App\Http\Resources\UserResource;
+use App\Services\CartService;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
@@ -40,9 +41,17 @@ class HandleInertiaRequests extends Middleware
     {
         [$message, $author] = str(Inspiring::quotes()->random())->explode('-');
 
+        $cartService = app(CartService::class);
+        $totalQuantity = $cartService->getTotalQuantity();
+        $totalPrice = $cartService->getTotalPrice();
+        $cartItems = $cartService->getCartItems();
+        //            $cartItems = [];
+        //        dd($cartItems, $totalQuantity, $totalPrice);
+
         return [
             ...parent::share($request),
             'name' => config('app.name'),
+            'csrf_token' => csrf_token(),
             'quote' => ['message' => trim($message), 'author' => trim($author)],
             'auth' => [
                 'user' => $request->user() ? new UserResource($request->user()) : null,
@@ -50,7 +59,12 @@ class HandleInertiaRequests extends Middleware
             'ziggy' => fn(): array => [
                 ...(new Ziggy)->toArray(),
                 'location' => $request->url(),
-            ]
+            ],
+            'success' => session('success'),
+            //            'error' => session('error'),
+            'miniCartItems' => $cartItems,
+            'totalCartPrice' => $totalPrice,
+            'totalCartQuantity' => $totalQuantity,
         ];
     }
 }

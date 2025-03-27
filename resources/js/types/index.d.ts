@@ -22,11 +22,17 @@ export interface NavItem {
     isActive?: boolean;
 }
 
+
+
 export interface SharedData {
     name: string;
+    csrf_token: string;
     quote: { message: string; author: string };
     auth: Auth;
     ziggy: Config & { location: string };
+    totalCartPrice: number;
+    totalCartQuantity:number;
+    miniCartItems:cartItem[];
     [key: string]: unknown;
 }
 
@@ -117,4 +123,23 @@ export type Image = {
     thumb:string;
     small:string;
     large:string;
+}
+
+export type CartItem = {
+    id:number;
+    product_id:number;
+    title:string;
+    slug:string;
+    price:number;
+    quantity:number;
+    image:string;
+    option_ids:Record<string, number>;
+    options:VariationTypeOption[]
+}
+
+export type GroupedCartItems = {
+    user:User,
+    items:CartItem[];
+    totalQuantity:number;
+    totalPrice:number;
 }
