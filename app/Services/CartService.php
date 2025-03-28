@@ -159,12 +159,12 @@ class CartService
 
         $cartItem = CartItem::where('user_id', $userId)
             ->where('product_id', $productId)
-            ->where('variation_type_option_ids', json_encode($optionIds))
+            ->whereJsonContains('variation_type_option_ids', $optionIds)
             ->first();
 
         if ($cartItem) {
             $cartItem->update([
-                'quantity' => $cartItem->quantity + $quantity
+                'quantity' => $quantity
             ]);
         }
     }
@@ -190,7 +190,7 @@ class CartService
 
         $cartItem = CartItem::where('user_id', $userId)
             ->where('product_id', $productId)
-            ->where('variation_type_option_ids', json_encode($optionIds))
+            ->whereJsonContains('variation_type_option_ids', $optionIds)
             ->first();
         if ($cartItem) {
             $cartItem->update([
@@ -233,13 +233,13 @@ class CartService
     protected function removeItemFromDatabase(int $productId, array $optionIds = [])
     {
         $userId = Auth::user()->id;
-        $cartItems = $this->getCartItemsFromCookies();
         ksort($optionIds);
 
         $cartItem = CartItem::where('user_id', $userId)
             ->where('product_id', $productId)
-            ->where('variation_type_option_ids', json_encode($optionIds))
+            ->whereJsonContains('variation_type_option_ids', $optionIds)
             ->delete();
+        // dd($cartItem);
     }
 
     protected function removeItemFromCookies(int $productId, array $optionIds = [])

@@ -6,7 +6,7 @@ import { Link, usePage } from '@inertiajs/react';
 export default function MiniCartDropdown() {
   const page = usePage<SharedData>();
   const { miniCartItems, totalCartQuantity, totalCartPrice } = page.props;
-
+  console.log('items :', miniCartItems);
   return (
     <div className="dropdown dropdown-end">
       <div tabIndex={0} role="button" className="btn btn-ghost btn-circle">

@@ -65,7 +65,7 @@ class ProductVariations extends EditRecord
 
         $variations = $this->record?->variations?->toArray();
         $data['variations'] = $this->mergeCartesianWithExisting($this->record?->variationTypes, $variations);
-
+        // dd($data);
         return $data;
     }
 
@@ -154,7 +154,7 @@ class ProductVariations extends EditRecord
                 $variationTypeOptionIds[] = $variation['variation_type_' . $variationType->id]['id'];
             }
             $formattedData[] = [
-                'id' => $variation['id'],
+                'id' => $variation['id'] ?? null,
                 'product_id' => $this->record->id,
                 'quantity' => $variation['quantity'],
                 'price' => $variation['price'],
@@ -175,7 +175,7 @@ class ProductVariations extends EditRecord
         // $record->variations()->delete();
         $variations = collect($variations)->map(function ($variation) {
             return [
-                'id' => $variation['id'],
+                'id' => $variation['id'] ?? null,
                 'product_id' => $variation['product_id'],
                 'variation_type_option_ids' => json_encode($variation['variation_type_option_ids']),
                 'quantity' => $variation['quantity'],

@@ -66,7 +66,7 @@ class CartController extends Controller
     public function update(Request $request, Product $product, CartService $cartService)
     {
         $data = $request->validate([
-            //            'option_ids' => 'nullable|array',
+            'option_ids' => 'nullable|array',
             'quantity' => 'required|integer|min:1',
             //            'product_id' => 'required|exists:products,id',
         ]);
@@ -86,6 +86,7 @@ class CartController extends Controller
     {
         $optionIds = $request->input('option_ids');
         $cartService->removeItemFromCart($product->id, $optionIds);
+
         return back()->with('success', 'Product removed from cart successfully.');
     }
 }
