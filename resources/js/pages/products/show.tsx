@@ -221,7 +221,7 @@ export default function Show({ product, variationOptions }: { product: Product, 
             </h1>
             <div>
               <div className="text-3xl font-semibold">
-                <CurrencyFormatter amount={computedProduct.price} currency="PKR" local="PK" />
+                <CurrencyFormatter amount={computedProduct.price} />
               </div>
             </div>
 

@@ -21,7 +21,7 @@ export default function ProductItem({ product }: { product: Product }) {
         <p>A card component has a figure, a body part, and inside body there are title and actions parts</p>
         <div className="card-actions justify-between my-2">
           <div className="text-lg font-bold">
-            <CurrencyFormatter amount={product.price} local="en-US" currency="PKR" />
+            <CurrencyFormatter amount={product.price} />
           </div>
           <button className="btn btn-primary">Buy Now
           </button>

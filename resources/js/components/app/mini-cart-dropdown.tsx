@@ -1,4 +1,5 @@
 import CurrencyFormatter from '@/components/ui/currency-formatter';
+import { productRoute } from '@/helpers';
 import { SharedData } from '@/types';
 import { Link, usePage } from '@inertiajs/react';
 
@@ -30,26 +31,26 @@ export default function MiniCartDropdown() {
             ) : (
               miniCartItems.map((item) => (
                 <div className={'flex gap-4 p-3'} key={item.id}>
-                  <Link href={route('product.show', item.slug)} className={"w-16 h-16 flex justify-center items-center"}>
+                  <Link href={productRoute(item)} className={"w-16 h-16 flex justify-center items-center"}>
                     <img src={item.image} alt={item.title} className={'max-h-full max-w-full '} />
                   </Link>
                   <div className={'flex-1'}>
                     <h3 className={'mb-3 font-semibold'}>
-                      <Link href={route('product.show', item.slug)}>{item.title}</Link>
+                      <Link href={productRoute(item)}>{item.title}</Link>
                     </h3>
                   </div>
                   <div className={"flex justify-between text-sm"}>
                     Quantity: {item.quantity}
                   </div>
                   <div>
-                    <CurrencyFormatter amount={(item.price * item.quantity)} currency={"PKR"} local={"PK"} />
+                    <CurrencyFormatter amount={(item.price * item.quantity)} />
                   </div>
                 </div>
               ))
             )}
           </div>
           <span className=" text-lg text-end ">
-            Subtotal: <CurrencyFormatter amount={totalCartPrice} currency={'PKR'} local={'Pk'} />
+            Subtotal: <CurrencyFormatter amount={totalCartPrice} />
           </span>
           <div className="card-actions">
             <Link href={route('cart.index')} className="btn btn-primary btn-block">

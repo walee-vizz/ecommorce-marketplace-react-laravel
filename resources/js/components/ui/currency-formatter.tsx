@@ -1,15 +1,17 @@
 // import React from "react";
 
+import { DefaultCurrency, DefaultCurrencyLocal } from "@/constants";
+
 export default function CurrencyFormatter(
   {
     amount,
-    currency = 'USD',
-    local }
+    currency = DefaultCurrency,
+    local = DefaultCurrencyLocal }
     :
     {
       amount: number,
-      currency: string,
-      local: string
+      currency?: string,
+      local?: string
     }) {
   return new Intl.NumberFormat(local, {
     style: 'currency',

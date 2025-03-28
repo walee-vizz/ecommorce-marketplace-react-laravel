@@ -18,10 +18,16 @@ Route::middleware(['auth', 'verified'])->group(function () {
 Route::controller(CartController::class)->prefix('cart')->name('cart.')->group(function () {
     Route::get('/', 'index')->name('index');
     Route::post('/add/{product}', 'store')->name('store');
-    Route::post('/checkout', 'checkout')->name('checkout');
     Route::put('/{product}', 'update')->name('update');
-    Route::delete('/{product}', 'destroy')->name('delete');
+    Route::delete('/{product}', 'destroy')->name('destroy');
 });
+
+
+// Verified routes
+Route::middleware(['verified'])->group(function () {
+    Route::post('/cart/checkout', [CartController::class, 'checkout'])->name('cart.checkout');
+});
+
 
 require __DIR__ . '/settings.php';
 require __DIR__ . '/auth.php';
