@@ -35,6 +35,12 @@ class ProductListResource extends JsonResource
                 'id' => $this->createdBy->id,
                 'name' => $this->createdBy->name,
             ],
+            'vendor' => [
+                'user_id' => $this->user?->vendor?->user_id ?? $this->user?->id,
+                'store_name' => $this->user?->vendor?->store_name ?? $this->user?->name,
+                'store_address' => $this->user?->vendor?->store_address ?? null,
+                'status' => $this->user?->vendor?->status,
+            ],
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];

@@ -78,6 +78,12 @@ export type Product = {
         price: number;
         variation_type_option_ids: number[];
     }>
+    vendor: {
+        user_id: number;
+        store_name: string;
+        store_address: string;
+        status: string;
+    };
     created_at: string;
     updated_at: string;
     [key: string]: unknown;

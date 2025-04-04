@@ -4,8 +4,6 @@ import CurrencyFormatter from "@/components/ui/currency-formatter";
 
 
 export default function ProductItem({ product }: { product: Product }) {
-  console.log('Product :', product);
-
   const form = useForm<{
     quantity: number;
     option_ids: Record<string, number>;
@@ -15,7 +13,6 @@ export default function ProductItem({ product }: { product: Product }) {
   });
 
   const addToCart = () => {
-    // console.log('Add to cart');
     form.post(route('cart.store', product.id), {
       preserveScroll: true,
       preserveState: true,
@@ -40,7 +37,26 @@ export default function ProductItem({ product }: { product: Product }) {
       </Link>
       <div className="card-body">
         <h2 className="card-title">{product.title}</h2>
-        <p>A card component has a figure, a body part, and inside body there are title and actions parts</p>
+        <p className="text-sm text-gray-500 flex gap-1">
+          {product.vendor &&
+
+            (
+              <div>
+                <span>By </span>
+                <strong>{product?.vendor?.store_name}</strong>
+              </div>
+            )
+          }
+          {product.department &&
+            (
+              <div>
+                <span>In </span>
+                <strong>{product.department.name}</strong>
+              </div>
+            )
+
+          }
+        </p>
         <div className="card-actions justify-between my-2">
           <div className="text-lg font-bold">
             <CurrencyFormatter amount={product.price} />
