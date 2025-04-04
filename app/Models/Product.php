@@ -73,21 +73,22 @@ class Product extends Model implements HasMedia
         return $query->isPublished();
     }
 
-    public function getPriceForOptions($options = []){
+    public function getPriceForOptions($options = [])
+    {
 
         $optionIds = array_values($options);
         sort($optionIds);
-
+        if (empty($optionIds)) {
+            return $this->price;
+        }
         foreach ($this->variations as $variation) {
 
             $a = $variation->variation_type_option_ids;
             sort($a);
-            if($a == $optionIds && !empty($variation->price)){
+            if ($a == $optionIds && !empty($variation->price)) {
                 return $variation->price;
             }
             return $this->price;
         }
     }
-
-
 }

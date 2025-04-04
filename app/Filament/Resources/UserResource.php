@@ -55,14 +55,17 @@ class UserResource extends Resource
                 Select::make('roles')
                     ->relationship('roles', 'name')
                     ->searchable()
-                    ->required(),
+                    ->preload()
+                    ->required()
+                    ->dehydrated(false),
                 TextInput::make('password')
                     ->password()
                     ->confirmed()
                     ->required(),
                 TextInput::make('password_confirmation')
                     ->password()
-                    ->required(),
+                    ->required()
+                    ->dehydrated(false),
             ])
             ->columns(2);
     }

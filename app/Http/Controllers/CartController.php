@@ -38,7 +38,7 @@ class CartController extends Controller
         ]);
         //    dd($data);
         try {
-            $cartService->addItemToCart($product, $data['quantity'], $data['option_ids']);
+            $cartService->addItemToCart($product, $data['quantity'], $data['option_ids'] ?: []);
         } catch (\Exception $exception) {
             Log::error('Error while adding item to cart: ' . $exception->getMessage());
             return back()->withErrors($exception->getMessage());
@@ -71,7 +71,7 @@ class CartController extends Controller
             //            'product_id' => 'required|exists:products,id',
         ]);
 
-        $optionIds = $request->input('option_ids');
+        $optionIds = $request->input('option_ids') ?: [];
         $quantity = $request->input('quantity');
 
         $cartService->updateItemQuantity($product->id, $quantity, $optionIds);

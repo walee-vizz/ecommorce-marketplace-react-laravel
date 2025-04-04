@@ -105,7 +105,7 @@ class CartService
                             ]
                         ];
                     }
-
+                    // dd($product->user);
 
                     $cartItemData[] = [
                         'id' => $cartItem['id'],
@@ -119,7 +119,7 @@ class CartService
                         'image' => $imageUrl ?: $product->getFirstMediaUrl('images', 'small'),
                         'user' => [
                             'id' => $product->created_by,
-                            'name' => $product->user->vendor->store_name,
+                            'name' => $product->user?->vendor?->store_name ?? $product->user->name,
                         ]
                     ];
                 }
@@ -273,6 +273,7 @@ class CartService
     protected function getCartItemsFromCookies()
     {
         $cartItems = json_decode(Cookie::get(self::COOKIE_NAME, '[]'), true);
+        // dd($cartItems);
         return $cartItems;
     }
 
@@ -289,5 +290,38 @@ class CartService
                 'totalPrice' => $items->sum(fn($item) => $item['price'] * $item['quantity']),
             ])
             ->toArray();
+    }
+
+
+    public function moveCartItemsToDatabase($userId)
+    {
+        if (!Auth::check()) {
+            return;
+        }
+        $cartItems = $this->getCartItemsFromCookies();
+        if (empty($cartItems)) {
+            return;
+        }
+        foreach ($cartItems as $item) {
+            $existingItem = CartItem::where('user_id', $userId)
+                ->where('product_id', $item['product_id'])
+                ->whereJsonContains('variation_type_option_ids', $item['option_ids'])
+                ->first();
+            if ($existingItem) {
+                $existingItem->update([
+                    'quantity' => DB::raw('quantity + ' . $item['quantity']),
+                ]);
+                continue;
+            }
+            // Create a new cart item
+            CartItem::create([
+                'user_id' => $userId,
+                'product_id' => $item['product_id'],
+                'quantity' => $item['quantity'],
+                'price' => $item['price'],
+                'variation_type_option_ids' => json_encode($item['option_ids']),
+            ]);
+        }
+        Cookie::queue(self::COOKIE_NAME, '', -1);
     }
 }
