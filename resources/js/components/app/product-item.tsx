@@ -41,18 +41,18 @@ export default function ProductItem({ product }: { product: Product }) {
           {product.vendor &&
 
             (
-              <div>
+              <span>
                 <span>By </span>
                 <strong>{product?.vendor?.store_name}</strong>
-              </div>
+              </span>
             )
           }
           {product.department &&
             (
-              <div>
+              <span>
                 <span>In </span>
                 <strong>{product.department.name}</strong>
-              </div>
+              </span>
             )
 
           }

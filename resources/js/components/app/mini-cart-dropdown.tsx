@@ -49,7 +49,7 @@ export default function MiniCartDropdown() {
               ))
             )}
           </div>
-          <span className=" text-lg text-end ">
+          <span className=" text-lg text-left font-bold">
             Subtotal: <CurrencyFormatter amount={totalCartPrice} />
           </span>
           <div className="card-actions">

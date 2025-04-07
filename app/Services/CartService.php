@@ -2,14 +2,15 @@
 
 namespace App\Services;
 
-use App\Models\CartItem;
 use App\Models\Product;
+use App\Models\CartItem;
+use Illuminate\Support\Str;
+use App\Models\VariationType;
+use Illuminate\Support\Facades\DB;
 use App\Models\VariationTypeOption;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cookie;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Str;
 
 class CartService
 {
@@ -24,8 +25,9 @@ class CartService
 
         if (!$optionIds || empty($optionIds)) {
             $optionIds = $product->variationTypes
-                ->mapWithKeys(fn(VariationTypeOption $type) => [$type->id => $type?->options[0]?->id])
+                ->mapWithKeys(fn(VariationType $type) => [$type->id => $type?->options[0]?->id])
                 ->toArray();
+            // dd($product->variationTypes()->first()->options[0], $optionIds);
         }
         $price = $product->getPriceForOptions($optionIds);
 

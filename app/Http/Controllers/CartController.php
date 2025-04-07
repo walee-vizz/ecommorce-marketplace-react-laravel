@@ -34,9 +34,7 @@ class CartController extends Controller
         $data = $request->validate([
             'option_ids' => 'nullable|array',
             'quantity' => 'required|integer|min:1',
-            //            'product_id' => 'required|exists:products,id',
         ]);
-        //    dd($data);
         try {
             $cartService->addItemToCart($product, $data['quantity'], $data['option_ids'] ?: []);
         } catch (\Exception $exception) {
@@ -68,7 +66,6 @@ class CartController extends Controller
         $data = $request->validate([
             'option_ids' => 'nullable|array',
             'quantity' => 'required|integer|min:1',
-            //            'product_id' => 'required|exists:products,id',
         ]);
 
         $optionIds = $request->input('option_ids') ?: [];
