@@ -18,16 +18,16 @@ import MiniCartDropdown from '@/components/app/mini-cart-dropdown';
 // ];
 
 // const rightNavItems: NavItem[] = [
-  // {
-  //   title: 'Repository',
-  //   href: 'https://github.com/laravel/react-starter-kit',
-  //   icon: Folder,
-  // },
-  // {
-  //   title: 'Documentation',
-  //   href: 'https://laravel.com/docs/starter-kits',
-  //   icon: BookOpen,
-  // },
+// {
+//   title: 'Repository',
+//   href: 'https://github.com/laravel/react-starter-kit',
+//   icon: Folder,
+// },
+// {
+//   title: 'Documentation',
+//   href: 'https://laravel.com/docs/starter-kits',
+//   icon: BookOpen,
+// },
 // ];
 
 // const activeItemStyles = 'text-neutral-900 dark:bg-neutral-800 dark:text-neutral-100';
@@ -36,10 +36,11 @@ import MiniCartDropdown from '@/components/app/mini-cart-dropdown';
 
 export function Navbar({ useSidebar = true }) {
   const page = usePage<SharedData>();
-  const { auth } = page.props;
+  const { auth, error, success } = page.props;
   const user = auth.user;
   const isAllowedToDashboard = user?.roles.some(role => ['Admin', 'Vendor'].includes(role));
-
+  console.log('error :', error);
+  console.log('success :', success);
   return (
     <div className="navbar bg-base-100 shadow-sm">
       <div className="flex-1 pl-5">

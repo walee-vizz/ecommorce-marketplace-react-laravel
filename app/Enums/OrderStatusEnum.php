@@ -49,8 +49,7 @@ enum OrderStatusEnum: String implements HasColor, HasIcon, HasLabel
         return match ($this) {
             self::Draft => 'info',
             self::Pending => 'primary',
-            self::Confirmed => 'info',
-            self::Processing => 'warning',
+            self::Confirmed, self::Processing => 'info',
             self::Shipped, self::OutForDelivery, self::Delivered => 'success',
             self::Cancelled, self::Refunded => 'danger',
         };
@@ -59,8 +58,8 @@ enum OrderStatusEnum: String implements HasColor, HasIcon, HasLabel
     public function getIcon(): ?string
     {
         return match ($this) {
-            self::Draft            => 'heroicon-m-sparkles',       // Icon for new items
-            self::Pending     => 'heroicon-m-arrow-path',      // Icon for in-progress status
+            self::Draft          => 'heroicon-m-clipboard-document-list',       // Icon for draft items
+            self::Pending        => 'heroicon-m-arrow-path',      // Icon for in-progress status
             self::Confirmed      => 'heroicon-m-check-circle',    // Confirmation icon
             self::Processing     => 'heroicon-m-arrow-path',      // Icon for in-progress status
             self::Shipped        => 'heroicon-m-truck',           // Shipping icon

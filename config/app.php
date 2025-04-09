@@ -123,4 +123,10 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
+
+
+    'currency' => env('APP_CURRENCY', 'USD'),
+    'currency_symbol' => env('APP_CURRENCY_SYMBOL', '$'),
+
+    'plateform_fee_pct' => env('PLATEFORM_FEE_PCT', 10),
 ];

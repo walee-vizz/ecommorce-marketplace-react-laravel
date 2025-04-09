@@ -61,6 +61,7 @@ class HandleInertiaRequests extends Middleware
                 'location' => $request->url(),
             ],
             'success' => session('success'),
+            'error' => session('error'),
             //            'error' => session('error'),
             'miniCartItems' => $cartItems,
             'totalCartPrice' => $totalPrice,

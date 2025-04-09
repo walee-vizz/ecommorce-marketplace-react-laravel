@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\StripeController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -26,7 +27,13 @@ Route::controller(CartController::class)->prefix('cart')->name('cart.')->group(f
 // Verified routes
 Route::middleware(['verified'])->group(function () {
     Route::post('/cart/checkout', [CartController::class, 'checkout'])->name('cart.checkout');
+
+    Route::controller(StripeController::class)->prefix('stripe')->name('stripe.')->group(function () {
+        Route::get('/success', 'success')->name('success');
+        Route::get('/failure', 'failure')->name('failure');
+    });
 });
+Route::post('/stripe/webhook', [StripeController::class, 'webhook'])->name('stripe.webhook');
 
 
 require __DIR__ . '/settings.php';

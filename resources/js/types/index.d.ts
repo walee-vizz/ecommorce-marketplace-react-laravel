@@ -33,6 +33,8 @@ export interface SharedData {
     totalCartPrice: number;
     totalCartQuantity:number;
     miniCartItems:cartItem[];
+    success: string;
+    error: string;
     [key: string]: unknown;
 }
 
