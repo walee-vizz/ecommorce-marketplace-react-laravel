@@ -2,24 +2,28 @@
 
 namespace App\Http\Controllers;
 
+use Inertia\Inertia;
 use App\Models\Order;
+use App\Models\CartItem;
 use Illuminate\Http\Request;
 use App\Enums\OrderStatusEnum;
 use Illuminate\Support\Facades\Log;
+use App\Http\Resources\OrderViewResource;
 
 class StripeController extends Controller
 {
     public function success(Request $request)
     {
         $session = $request->query('session_id');
-        dd($session);
-        // $order = Order::where('stripe_session_id', $session)->first();
-        // if ($order) {
-        //     $order->update([
-        //         'status' => OrderStatusEnum::COMPLETED,
-        //     ]);
-        // }
-        // return view('stripe.success');
+        $user = auth()->user();
+        $orders = Order::where('stripe_session_id', $session)->where('user_id', $user?->id)->get();
+        if ($orders->isEmpty()) {
+            abort(404);
+        }
+
+        return Inertia::render('stripe/success', [
+            'orders' => OrderViewResource::collection($orders),
+        ]);
     }
 
     public function failure() {}
@@ -28,7 +32,7 @@ class StripeController extends Controller
     {
         $stripe = new \Stripe\StripeClient(config('services.stripe.secret_key'));
 
-        $endpoint_secret = config('services.stripe.endpoint_secret');
+        $webhook_secret = config('services.stripe.webhook_secret');
 
         $payload = $request->getContent();
         $sig_header = $request->header('Stripe-Signature');
@@ -37,14 +41,14 @@ class StripeController extends Controller
             $event = \Stripe\Webhook::constructEvent(
                 $payload,
                 $sig_header,
-                $endpoint_secret
+                $webhook_secret
             );
 
 
             // Handle the event
             Log::info('==========================');
             Log::info('Stripe Webhook Event Type ->: ' . json_encode($event?->type));
-            Log::info('Stripe Webhook Event Data ->: ' . json_encode($event));
+            Log::info($event);
             Log::info('==========================');
 
             switch ($event->type) {
@@ -58,14 +62,39 @@ class StripeController extends Controller
                         $order->payment_intent = $paymentIntent;
                         $order->status = OrderStatusEnum::Paid;
                         $order->save();
+
                         // Send notification to vendor/user
 
-                        $productsToBeDeletedFromCart[] = [
+                        $productsToBeDeletedFromCart = [
                             ...$productsToBeDeletedFromCart,
                             ...$order->orderItems->map(fn($item) => ($item->product_id))->toArray(),
                         ];
-                    }
 
+
+                        // Reduce Product Quantity
+                        foreach ($order->orderItems as $item) {
+                            $product = $item->product;
+                            $options = $item->variation_type_option_ids;
+                            if ($options) {
+                                sort($options);
+                                $variation = $product->variations()->whereJsonContains('variation_type_option_ids', $options)->first();
+                                if ($variation && $variation->quantity != null) {
+                                    $variation->quantity -= $item->quantity;
+                                    $variation->save();
+                                }
+                            } else if ($product->quantity != null) {
+                                $product->quantity -= $item->quantity;
+                                $product->save();
+                            }
+                        }
+                    }
+                    // Log::info('Products to be deleted from cart: ', $productsToBeDeletedFromCart);
+                    // Log::info('User: ' .  $orders->first()->user_id);
+                    // Delete Cart Items
+                    CartItem::where('user_id', $orders->first()->user_id)
+                        ->whereIn('product_id', $productsToBeDeletedFromCart)
+                        ->where('saved_for_later', false)
+                        ->delete();
 
                     break;
                 case 'charge.updated':
@@ -90,7 +119,7 @@ class StripeController extends Controller
                         $order->online_payment_commission = $vendorShare * $stripeFee;
                         $order->website_commission = ($order->total_price - $order->online_payment_commission) / 100 * $plateFormFeePercent;
                         $order->vendor_subtotal = $order->total_price - $order->online_payment_commission - $order->website_commission;
-                        $order->status = OrderStatusEnum::Confirmed;
+                        $order->status = OrderStatusEnum::Processing;
                         $order->save();
 
                         // Send notification to vendor/user
@@ -111,7 +140,12 @@ class StripeController extends Controller
             // Invalid payload
             return response()->json(['error' => 'Invalid payload'], 400);
         } catch (\Stripe\Exception\SignatureVerificationException $e) {
-            Log::error($e);
+            Log::error($e, [
+                'payload' => $payload,
+                'sig_header' => $sig_header,
+                'webhook_secret' => $webhook_secret,
+                'type' => 'SignatureVerificationException',
+            ]);
 
             // Invalid signature
             return response()->json(['error' => 'Invalid payload'], 400);

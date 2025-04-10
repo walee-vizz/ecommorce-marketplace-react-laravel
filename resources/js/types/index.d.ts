@@ -31,8 +31,8 @@ export interface SharedData {
     auth: Auth;
     ziggy: Config & { location: string };
     totalCartPrice: number;
-    totalCartQuantity:number;
-    miniCartItems:cartItem[];
+    totalCartQuantity: number;
+    miniCartItems: cartItem[];
     success: string;
     error: string;
     [key: string]: unknown;
@@ -61,7 +61,7 @@ export type Product = {
     images: Image[];
     description: string;
     short_description: string;
-    created_by:{
+    created_by: {
         id: number;
         name: string;
     };
@@ -73,8 +73,8 @@ export type Product = {
         id: number;
         name: string;
     };
-    variationTypes:VariationType[];
-    variations:Array<{
+    variationTypes: VariationType[];
+    variations: Array<{
         id: number;
         quantity: number;
         price: number;
@@ -109,45 +109,76 @@ export interface PaginationMetadata {
 
 
 export type PaginationProps<T> = {
-    data:Array<T>;
+    data: Array<T>;
 }
 
 export type VariationType = {
     id: number;
     name: string;
     type: 'Select' | 'Radio' | 'Image';
-    options:VariationTypeOption[];
+    options: VariationTypeOption[];
 }
 
 export type VariationTypeOption = {
     id: number;
     name: string;
     images?: Image[];
-    type:VariationType
+    type: VariationType
 }
 
 export type Image = {
     id: number;
-    thumb:string;
-    small:string;
-    large:string;
+    thumb: string;
+    small: string;
+    large: string;
 }
 
 export type CartItem = {
-    id:number;
-    product_id:number;
-    title:string;
-    slug:string;
-    price:number;
-    quantity:number;
-    image:string;
-    option_ids:Record<string, number>;
-    options:VariationTypeOption[]
+    id: number;
+    product_id: number;
+    title: string;
+    slug: string;
+    price: number;
+    quantity: number;
+    image: string;
+    option_ids: Record<string, number>;
+    options: VariationTypeOption[]
 }
 
 export type GroupedCartItems = {
-    user:User,
-    items:CartItem[];
-    totalQuantity:number;
-    totalPrice:number;
+    user: User,
+    items: CartItem[];
+    totalQuantity: number;
+    totalPrice: number;
+}
+export type OrderItem = {
+    id: number;
+    quantity: number;
+    price: number;
+    variation_type_option_ids: number[];
+    product: {
+        id: number;
+        title: string;
+        slug: string;
+        description: string;
+        image: string;
+    }
+}
+
+export type Order = {
+    id: number;
+    totalPrice: number;
+    status: string;
+    createdAt: string;
+    vendorUser: {
+        id: number;
+        name: string;
+        email: string;
+        store_name: string;
+        store_address: string;
+    }
+    orderItems: OrderItem[];
+}
+export interface OrdersList {
+    data: Order[];
 }

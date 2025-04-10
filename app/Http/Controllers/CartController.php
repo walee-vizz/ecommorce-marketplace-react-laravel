@@ -96,16 +96,18 @@ class CartController extends Controller
             if ($vendorId) {
                 $checkoutCartitems = [$allCartItems[$vendorId]];
             }
+            // dd($checkoutCartitems);
             $orders = [];
-            $items = [];
             $lineItems = [];
             foreach ($checkoutCartitems as $item) {
                 $user = $item['user'];
                 $cartItems = $item['items'];
+                $items = [];
 
+                // dd($cartItems);
                 $order = Order::create([
                     'stripe_session_id' => null,
-                    'user_id' => $user['id'],
+                    'user_id' => $request->user()->id,
                     'vendor_user_id' => $user['id'],
                     'total_price' => $item['totalPrice'],
                     'status' => OrderStatusEnum::Draft,
@@ -139,9 +141,12 @@ class CartController extends Controller
                     }
                     $lineItems[] = $lineItem;
                 }
+                $order->orderItems()->delete();
+                // dd($items);
                 $order->orderItems()->createMany($items);
+                // $items = [];
             }
-            // dd($lineItems, $items);
+            // dd($lineItems, $items, $order->orderItems()->get());
             // Create Stripe Checkout Session
             $session = \Stripe\Checkout\Session::create([
                 'customer_email' => $request->user()->email,
@@ -160,6 +165,7 @@ class CartController extends Controller
             }
 
             DB::commit();
+            // dd($lineItems, $items, $order->orderItems()->get());
             // Redirect to Stripe Checkout
             return redirect()->away($session->url);
         } catch (\Exception $e) {

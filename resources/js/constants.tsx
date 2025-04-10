@@ -1,2 +1,2 @@
-export const DefaultCurrency = 'PKR';
-export const DefaultCurrencyLocal = 'PK';
+export const DefaultCurrency = 'USD';
+export const DefaultCurrencyLocal = 'US';

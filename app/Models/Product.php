@@ -73,7 +73,10 @@ class Product extends Model implements HasMedia
     {
         return $query->isPublished();
     }
-
+    // public function vendor(): BelongsTo
+    // {
+    //     return $this->belongsTo(Vendor::class, 'created_by')->with('user');
+    // }
     public function getPriceForOptions($options = [])
     {
 
@@ -91,5 +94,23 @@ class Product extends Model implements HasMedia
             }
             return $this->price;
         }
+    }
+
+
+    public function getImageForOptions($options = [])
+    {
+        $optionIds = array_values($options);
+        sort($optionIds);
+        if (empty($optionIds)) {
+            return $this->getFirstMediaUrl('images');
+        }
+        $options = VariationTypeOption::whereIn('id', $optionIds)->with('variationType')->get();
+
+        foreach ($options as $option) {
+            $img = $option->getFirstMediaUrl('images', 'small');
+            if ($img) {
+                return $img;
+            }
+        };
     }
 }
