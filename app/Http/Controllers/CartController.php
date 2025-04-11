@@ -154,7 +154,7 @@ class CartController extends Controller
                 'line_items' => $lineItems,
                 'mode' => 'payment',
                 'success_url' => route('stripe.success', []) . "?session_id={CHECKOUT_SESSION_ID}",
-                'cancel_url' => route('stripe.failure', []),
+                'cancel_url' => route('stripe.failure', []) . "?session_id={CHECKOUT_SESSION_ID}",
             ]);
 
             // Update the order with the Stripe session ID

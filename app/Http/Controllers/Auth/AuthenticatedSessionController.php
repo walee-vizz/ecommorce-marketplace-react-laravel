@@ -38,9 +38,9 @@ class AuthenticatedSessionController extends Controller
         $user = Auth::user();
         $route = '/';
         if ($user->hasAnyRole(RolesEnum::Admin, RolesEnum::Vendor)) {
-            $cartService->moveCartItemsToDatabase(
-                $user->id,
-            );
+            // $cartService->moveCartItemsToDatabase(
+            //     $user->id,
+            // );
             // $route = route('filament.admin.pages.dashboard');
             // return redirect()->route('admin.dashboard', absolute: false);
         } elseif ($user->hasRole(RolesEnum::User)) {

@@ -26,7 +26,37 @@ class StripeController extends Controller
         ]);
     }
 
-    public function failure() {}
+    public function failure(Request $request)
+    {
+        $sessionId = $request->query('session_id');
+
+        try {
+            // Retrieve the session from Stripe
+            $stripe = new \Stripe\StripeClient(config('services.stripe.secret_key'));
+
+            // Update the order status in your database
+            $orders = Order::where('stripe_session_id', $sessionId)->with('orderItems', 'user', 'vendorUser', 'vendor')->get();
+            if ($orders->isNotEmpty()) {
+                foreach ($orders as $order) {
+                    $order->status = OrderStatusEnum::Draft;
+                    $order->save();
+                }
+            }
+
+            // Optionally, log the cancellation
+            Log::info("Checkout session {$sessionId} was cancelled.");
+
+            // Redirect or render a view to inform the user
+            return Inertia::render('stripe/failure', [
+                'orders' => OrderViewResource::collection($orders),
+            ]);
+        } catch (\Exception $e) {
+            Log::error("Error retrieving Stripe session: {$e->getMessage()}");
+
+            // Handle the error gracefully
+            abort(500, 'An error occurred while processing your request.');
+        }
+    }
 
     public function webhook(Request $request)
     {
