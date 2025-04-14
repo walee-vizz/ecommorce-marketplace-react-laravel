@@ -71,7 +71,7 @@ export default function Success({
               <Link href={"#"} className="btn btn-primary" >
                 View order Details
               </Link>
-              <Link href={route('dashboard')} className="btn" >
+              <Link href={route('home')} className="btn" >
                 Back Home
               </Link>
             </div>

@@ -5,10 +5,13 @@ namespace App\Http\Controllers;
 use Inertia\Inertia;
 use App\Models\Order;
 use App\Models\CartItem;
+use App\Mail\NewOrderMail;
 use Illuminate\Http\Request;
 use App\Enums\OrderStatusEnum;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 use App\Http\Resources\OrderViewResource;
+use App\Mail\CheckoutCompletedMail;
 
 class StripeController extends Controller
 {
@@ -153,7 +156,9 @@ class StripeController extends Controller
                         $order->save();
 
                         // Send notification to vendor/user
+                        Mail::to($order->vendorUser)->send(new NewOrderMail($order));
                     }
+                    Mail::to($orders->first()->user)->send(new CheckoutCompletedMail($orders));
 
                     // Fulfill the purchase...
                     break;

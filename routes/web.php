@@ -3,8 +3,16 @@
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\StripeController;
+use App\Models\Order;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+
+Route::get('/test', function(){
+    $order  = Order::latest()->first();
+
+    dd($order, $order->vendorUser);
+
+});
 
 Route::get('/', [ProductController::class, 'index'])->name('home');
 Route::get('/products/{product:slug}', [ProductController::class, 'show'])->name('product.show');

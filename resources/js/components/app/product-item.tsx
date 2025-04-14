@@ -27,7 +27,7 @@ export default function ProductItem({ product }: { product: Product }) {
 
   return (
     <div className="card bg-base-100 w-96 shadow-sm">
-      <Link href={route('product.show', product.slug)} >
+      <Link href={route('product.show', product.slug)} prefetch >
         <figure>
           <img
             src={product.image || "https://img.daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.webp"}
