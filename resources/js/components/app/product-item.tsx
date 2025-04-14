@@ -20,7 +20,7 @@ export default function ProductItem({ product }: { product: Product }) {
         console.log('Error :', err);
       },
       onSuccess: () => {
-        alert('Item added successfully.');
+        console.log('Item added successfully.');
       }
     })
   }
